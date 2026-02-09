@@ -1,3 +1,6 @@
+import hashlib
+import os
+
 import rasterio
 from rasterio.transform import Affine
 from rasterio.enums import Resampling
@@ -87,3 +90,23 @@ def raster_intersection(raster1, raster2):
     arr_raster2 = raster2.read(1, window=Window(col1r2, row1r2, width2, height2))
 
     return arr_raster1, arr_raster2
+
+
+def get_file_size(path: str) -> int:
+    """
+    Retorna o tamanho do arquivo em bytes.
+    """
+    return os.path.getsize(path)
+
+
+def get_sha256_checksum(path: str, chunk_size: int = 8192) -> str:
+    """
+    Calcula o checksum SHA-256 de um arquivo.
+    """
+    sha256 = hashlib.sha256()
+
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(chunk_size), b""):
+            sha256.update(chunk)
+
+    return sha256.hexdigest()
